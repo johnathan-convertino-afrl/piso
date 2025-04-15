@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("_re",["Function"],[["_restart",,[["sipo",,,,0,"File2:tb_cocotb.py:sipo._restart","PythonClass:sipo:_restart"]]]]);
