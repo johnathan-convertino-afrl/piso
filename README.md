@@ -25,7 +25,7 @@
 ### DOCUMENTATION
   For detailed usage information, please navigate to one of the following sources. They are the same, just in a different format.
 
-  - [piso.pdf](docs/manual/piso.pdf)
+  - [PISO.pdf](docs/manual/PISO.pdf)
   - [github page](https://johnathan-convertino-afrl.github.io/piso/)
 
 ### DEPENDENCIES
