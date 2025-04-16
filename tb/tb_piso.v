@@ -49,6 +49,7 @@ module tb_piso ();
   reg [7:0] tb_pdata;
 
   reg [7:0] tb_data;
+  reg [7:0] fin_data;
 
   wire tb_sdata;
   wire [7:0] tb_dcount;
@@ -110,6 +111,7 @@ module tb_piso ();
       tb_pdata <= 0;
       tb_ena <= 1'b0;
       tb_load <= 1'b0;
+      fin_data <= 0;
     end else begin
       tb_ena <= ~tb_ena & ~tb_load;
       tb_load <= 1'b0;
@@ -119,7 +121,8 @@ module tb_piso ();
       begin
         tb_ena <= tb_ena;
         tb_load <= 1'b1;
-        tb_pdata <= tb_pdata + 1;
+        tb_pdata <= tb_pdata + 1;fin_data
+        fin_data <= tb_data;
       end
 
       if(tb_pdata == 255)
@@ -135,9 +138,9 @@ module tb_piso ();
     begin
       tb_data <= 0;
     end else begin
-      if(tb_ena == 1'b1 || (tb_dcount == 0 && tb_load == 1'b0))
+      if(tb_ena == 1'b1)
       begin
-        tb_data <= {(tb_dcount == 7 ? 6'b000000 : tb_data[6:0]), tb_sdata};
+        tb_data <= {(tb_dcount == 8 ? 6'b000000 : tb_data[6:0]), tb_sdata};
       end
     end
   end

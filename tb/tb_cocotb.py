@@ -138,7 +138,7 @@ async def increment_test(dut):
 
     await reset_dut(dut)
 
-    for x in range(0, 2**8):
+    for x in range(1, 2**8):
 
         await RisingEdge(dut.clk)
 
@@ -148,9 +148,12 @@ async def increment_test(dut):
         await RisingEdge(dut.clk)
         dut.load.value = 0
 
+        await Timer(20, units="ns")
+
         for _ in range(dut.BUS_WIDTH.value*8):
+          await RisingEdge(dut.clk)
           dut.ena.value = 1
-          await ena_pulse
+          await RisingEdge(dut.clk)
           dut.ena.value = 0
           await Timer(20, units="ns")
 

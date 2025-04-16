@@ -48,10 +48,10 @@
  *  clk     - global clock for the core.
  *  rstn    - negative syncronus reset to clk.
  *  ena     - enable for core, use to change output rate. Enable serial shift output.
- *  load    - load parallel data into core. This can be done at any time.
+ *  load    - load parallel data into core. Reset for next data message to send. This can be done at any time.
  *  pdata   - parallel data input, registered at load only.
  *  sdata   - serialized data output.
- *  dcount  - Number of bits to shift out (what is left, first bit is always available).
+ *  dcount  - Number of bits to shift out. When the count hits zero, the parallel data register is empty and last bit is output on sdata.
  *
  */
 module piso #(
@@ -72,13 +72,16 @@ module piso #(
     localparam COUNT_WIDTH = clogb2(BUS_WIDTH*8)+1;
 
     // data count register
-    reg [COUNT_WIDTH-1:0] r_dcount;
+    reg [COUNT_WIDTH:0] r_dcount;
 
     // register to contain input parallel data that is positive edge shifted.
     reg [BUS_WIDTH*8-1:0] r_ppdata;
 
+    // register for output data captured on postive edge
+    reg r_sdata;
+
     // assign counter to output data count so cores can track output status.
-    assign dcount = {{(BUS_WIDTH*8-COUNT_WIDTH){1'b0}}, r_dcount};
+    assign dcount = {{(BUS_WIDTH*8-COUNT_WIDTH-1){1'b0}}, r_dcount};
 
     // serialized output data.
     assign sdata = r_ppdata[BUS_WIDTH*8-1];
@@ -94,7 +97,7 @@ module piso #(
 
         if(load == 1'b1)
         begin
-          r_dcount <= BUS_WIDTH*8-1;
+          r_dcount <= BUS_WIDTH*8;
         end
 
         if(ena == 1'b1)
@@ -115,17 +118,21 @@ module piso #(
       if(rstn == 1'b0)
       begin
         r_ppdata <= 0;
+        r_sdata <= 1'b0;
       end else begin
         r_ppdata <= r_ppdata;
+        r_sdata  <= r_sdata;
 
         if(load == 1'b1)
         begin
           r_ppdata <= pdata;
+          r_sdata <= 1'b0;
         end
 
         if(ena == 1'b1)
         begin
           r_ppdata <= {r_ppdata[BUS_WIDTH*8-2:0], 1'b0};
+          r_sdata  <= r_ppdata[BUS_WIDTH*8-1];
         end
       end
     end
