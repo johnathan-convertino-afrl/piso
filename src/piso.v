@@ -88,7 +88,7 @@ module piso #(
     begin
       if(rstn == 1'b0)
       begin
-        r_dcount <= BUS_WIDTH*8-1;
+        r_dcount <= 0;
       end else begin
         r_dcount <= r_dcount;
 

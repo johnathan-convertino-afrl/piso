@@ -178,7 +178,7 @@ async def in_reset(dut):
     await Timer(50, units="ns")
 
     assert dut.sdata.value.integer == 0, "SDATA is 1!"
-    assert dut.dcount.value.integer == dut.BUS_WIDTH.value*8-1, f"DCOUNT is not {dut.BUS_WIDTH.value*8-1}"
+    assert dut.dcount.value.integer == 0, f"DCOUNT is not 0"
 
 # Function: no_clock
 # Coroutine that is identified as a test routine. This routine tests if no ready when clock is lost
@@ -194,4 +194,4 @@ async def no_clock(dut):
     await Timer(50, units="ns")
 
     assert dut.sdata.value.integer == 0, "SDATA is 1!"
-    assert dut.dcount.value.integer == dut.BUS_WIDTH.value*8-1, f"DCOUNT is not {dut.BUS_WIDTH.value*8-1}"
+    assert dut.dcount.value.integer == 0, f"DCOUNT is not 0"
