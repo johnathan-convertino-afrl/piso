@@ -27,7 +27,7 @@
 \subsection{Introduction}
 
 \par
-This core converts parallel input data into serial output data. This is done on a positive clock edge in relation to a active high enable. PISO is useful for many parallel to serial operations such as UARTS, SPI, i2c, 1553, etc. This is a fusesoc 2.X compatable core and its VLNV is AFRL:simple:piso:X.X.X.
+This core converts parallel input data into serial output data. This is done on a positive clock edge in relation to a active high enable. PISO is useful for many parallel to serial operations such as UARTS, SPI, i2c, 1553, etc. This is a fusesoc 2.X compatible core and its VLNV is AFRL:simple:piso:X.X.X.
 \subsection{Dependencies}
 
 \par
@@ -63,7 +63,7 @@ Example:
       - ">=AFRL:simple:piso:1.0.0"
 \end{lstlisting}
 
-Module instantion:
+Module instantiation:
 \begin{lstlisting}[language=Verilog]
     piso #(
       .BUS_WIDTH(4)
@@ -150,7 +150,7 @@ run up to a certain number of words have been output.
 
 \subsection{cocotb}
 \par
-This method allows for quick writing of test benches that acutally assert and check the state of the core.
+This method allows for quick writing of test benches that actually assert and check the state of the core.
 These tests are much more conclusive since it will run all test vectors and generate a report if they
 pass or fail. All tests output waves to a single fst file. The method of launching the tests is to use
 fusesoc. These have not been written to use a python runner method or makefiles.
