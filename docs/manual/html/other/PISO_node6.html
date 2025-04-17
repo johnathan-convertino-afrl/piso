@@ -48,11 +48,9 @@ In a Project</A>
 </H2>
 
 <P>
-This core is meant to be used on the same clock domain as the input parallel data. The serial output rate is set by the enable.
+This core is designed to be used on the same clock domain as the input parallel data. The serial output rate is set by the enable.
 The enable should only be pulsed for one clock cycle. If the clock is the rate the enable should be tied high. Load has to be
-used to set the input data and reset the output count. The data count allows other cores to know what bit currently being
-output from the core. On load no data is output till the enable is pulsed and is kept at the output till load is set. Load
-will zero the output, also can be zeroed by just continuing to use enable past the full bit count (internal reg is filled with zeros).
+used to load the input data to the register and reset the output count. The data count provides other cores a bit count to know what bit currently being output from the core. On load no data is output till the enable is pulsed. Once pulsed the output will be the data bit. Load will zero the output, also can be zeroed by just continuing to use enable past the full bit count (internal reg is filled with zeros).
 The series of steps to use the core are as follows.
 
 <OL>
@@ -62,12 +60,14 @@ The series of steps to use the core are as follows.
 </LI>
 <LI>Pulse enable to 1 that is synced to the main clock. Only hold high for one period of the master clock.
 </LI>
+<LI>Data bit will be output on the serial line and held till next enable or load.
+</LI>
 <LI>Repeat enable pulse until dcount is equal to 0.
 </LI>
 </OL>
 
 <P>
-Adding the core to a fusesoc project, outside of adding the verilog module to your code, requires it is added as dependency.
+Adding the core to a fusesoc project, outside of adding the verilog module to your code, requires the core be added as dependency.
 Example:
 <TABLE FRAME="VOID" CELLPADDING="4"><TR><TD>
 <PRE>

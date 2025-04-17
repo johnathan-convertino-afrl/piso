@@ -50,8 +50,8 @@ cocotb</A>
 <P>
 This method allows for quick writing of test benches that acutally assert and check the state of the core.
 These tests are much more conclusive since it will run all test vectors and generate a report if they
-pass or fail. All tests generate to a single fst wave file. The method of launching the tests is to use
-fusesoc. These have not been written to use the python runner method or makefiles.
+pass or fail. All tests output waves to a single fst file. The method of launching the tests is to use
+fusesoc. These have not been written to use a python runner method or makefiles.
 To use the cocotb tests you must install the following python libraries.
 <TABLE FRAME="VOID" CELLPADDING="4"><TR><TD>
 <PRE>
@@ -63,12 +63,12 @@ To use the cocotb tests you must install the following python libraries.
 The targets available are listed below.
 
 <UL>
-<LI><SPAN  CLASS="textbf">sim_cocotb</SPAN> Standard simulation PISO conversion using cocotb.
+<LI><SPAN  CLASS="textbf">sim_cocotb</SPAN> Standard simulation for PISO.
 </LI>
 </UL>
 
 <P>
-Then you must use the cocotb sim target. The targets above can be run with various parameters.
+The targets above can be run with various parameters.
 This test will check the input/output against each other to validate core operation.
 <TABLE FRAME="VOID" CELLPADDING="4"><TR><TD>
 <PRE>
