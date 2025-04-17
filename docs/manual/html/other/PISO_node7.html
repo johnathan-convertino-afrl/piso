@@ -49,6 +49,14 @@ Architecture</A>
 </H1>
 
 <P>
+This core is made to interface parallel to serial data. Data is loaded into the core, and then enable is pulsed to
+push data out in a serial fashion. There is a count output that tells how many bits have been output. Data is only output
+when the enable is toggled. The counter will start at the max number of bits. For a 32 bit word this will be the decimal 32.
+When toggled the counter will state the number of the bit present at the output. Starting at 32 means once enable is active,
+and the counter is 31, bit 31 of the loaded word will now be output on the serial output. When the counter reaches 0 it means
+the internal register has output all data since the last bit, 0, is now present on the serial output. Any further enable
+pulses will not change the count but will shift the internal register. This will result in a 0 at the output since the register
+shifts in 0 bits as each bit is output.
 The only module is the piso module. It is listed below.
 
 <P>

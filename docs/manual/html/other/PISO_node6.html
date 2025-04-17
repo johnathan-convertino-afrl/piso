@@ -48,31 +48,79 @@ In a Project</A>
 </H2>
 
 <P>
-This core is made to interface for parallel to serial data. Data is loaded into the core, and then enable is pulsed to
-push data out in a serial fashion. There is a count output that tells how many bits have been output. Data is always
-presented at the output so when count is at 31, the serial data output has bit 31 presented at the output.
-The series of steps to use it are as follows.
+This core is meant to be used on the same clock domain as the input parallel data. The serial output rate is set by the enable.
+The enable should only be pulsed for one clock cycle. If the clock is the rate the enable should be tied high. Load has to be
+used to set the input data and reset the output count. The data count allows other cores to know what bit currently being
+output from the core. On load no data is output till the enable is pulsed and is kept at the output till load is set. Load
+will zero the output, also can be zeroed by just continuing to use enable past the full bit count (internal reg is filled with zeros).
+The series of steps to use the core are as follows.
 
 <OL>
 <LI>Set pdata to input data, and set load to 1 (data will be loaded on positive clock edge to internal registers).
 </LI>
-<LI>Set load to 0.
+<LI>Set load to 0 (dcount will now be the max number of bits in the word loaded).
 </LI>
 <LI>Pulse enable to 1 that is synced to the main clock. Only hold high for one period of the master clock.
 </LI>
-<LI>Repeat enable pulse untill dcount is equal to 0.
+<LI>Repeat enable pulse until dcount is equal to 0.
 </LI>
 </OL>
 
 <P>
+Adding the core to a fusesoc project, outside of adding the verilog module to your code, requires it is added as dependency.
+Example:
 <TABLE FRAME="VOID" CELLPADDING="4"><TR><TD>
 <PRE>
-
+  dep:
+    depend:
+      - "&gt;=AFRL:simple:piso:1.0.0"
 </PRE>
 </TD></TR></TABLE>
 
 <P>
-<BR><HR>
+Module instantion:
+<TABLE FRAME="VOID" CELLPADDING="4"><TR><TD>
+<PRE>
+    piso #(
+      .BUS_WIDTH(4)
+    ) inst_piso (
+      .clk(clk),
+      .rstn(rstn),
+      .ena(ena),
+      .load(load),
+      .pdata(pdata),
+      .sdata(sdata),
+      .dcount(dcount)
+    );
+</PRE>
+</TD></TR></TABLE>
+
+<P>
+
+<DIV CLASS="navigation"><HR>
+<!--Navigation Panel-->
+<A
+ HREF="PISO_node7.html">
+<IMG WIDTH="37" HEIGHT="24" ALT="next" SRC="next.png"></A> 
+<A
+ HREF="PISO_node2.html">
+<IMG WIDTH="26" HEIGHT="24" ALT="up" SRC="up.png"></A> 
+<A
+ HREF="PISO_node5.html">
+<IMG WIDTH="63" HEIGHT="24" ALT="previous" SRC="prev.png"></A> 
+<A ID="tex2html59"
+  HREF="PISO_node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Next:</B> <A
+ HREF="PISO_node7.html">Architecture</A>
+<B> Up:</B> <A
+ HREF="PISO_node2.html">Usage</A>
+<B> Previous:</B> <A
+ HREF="PISO_node5.html">fusesoc_info Depenecies</A>
+ &nbsp; <B>  <A ID="tex2html60"
+  HREF="PISO_node1.html">Contents</A></B> </DIV>
+<!--End of Navigation Panel-->
 
 </BODY>
 </HTML>

@@ -27,8 +27,9 @@
 \subsection{Introduction}
 
 \par
-This core converts the parallel data into serial data. This is done on a positive clock edge in relation to the enable.
-The enable sets the rate and should only be held high for the same period as the main clock.
+This core converts the parallel data into serial data. This is done on a positive clock edge in relation to a active high enable.
+The enable sets the rate and should only be held high for the same period as the main clock. This core is useful for any parallel to
+serial operation such as UARTS, SPI, i2c, 1553, etc. This is a fusesoc 2.X compatable core and its VLNV is AFRL:simple:piso:X.X.X.
 \subsection{Dependencies}
 
 \par
@@ -44,22 +45,52 @@ The following are the dependencies of the cores.
 
 \subsection{In a Project}
 \par
-This core is made to interface for parallel to serial data. Data is loaded into the core, and then enable is pulsed to
-push data out in a serial fashion. There is a count output that tells how many bits have been output. Data is always
-presented at the output so when count is at 31, the serial data output has bit 31 presented at the output.
-The series of steps to use it are as follows.
+This core is meant to be used on the same clock domain as the input parallel data. The serial output rate is set by the enable.
+The enable should only be pulsed for one clock cycle. If the clock is the rate the enable should be tied high. Load has to be
+used to set the input data and reset the output count. The data count allows other cores to know what bit currently being
+output from the core. On load no data is output till the enable is pulsed and is kept at the output till load is set. Load
+will zero the output, also can be zeroed by just continuing to use enable past the full bit count (internal reg is filled with zeros).
+The series of steps to use the core are as follows.
 \begin{enumerate}
   \item Set pdata to input data, and set load to 1 (data will be loaded on positive clock edge to internal registers).
-  \item Set load to 0.
+  \item Set load to 0 (dcount will now be the max number of bits in the word loaded).
   \item Pulse enable to 1 that is synced to the main clock. Only hold high for one period of the master clock.
-  \item Repeat enable pulse untill dcount is equal to 0.
+  \item Repeat enable pulse until dcount is equal to 0.
 \end{enumerate}
 
+Adding the core to a fusesoc project, outside of adding the verilog module to your code, requires it is added as dependency.
+Example:
+\begin{lstlisting}[language=bash]
+  dep:
+    depend:
+      - ">=AFRL:simple:piso:1.0.0"
+\end{lstlisting}
+
+Module instantion:
 \begin{lstlisting}[language=Verilog]
+    piso #(
+      .BUS_WIDTH(4)
+    ) inst_piso (
+      .clk(clk),
+      .rstn(rstn),
+      .ena(ena),
+      .load(load),
+      .pdata(pdata),
+      .sdata(sdata),
+      .dcount(dcount)
+    );
 \end{lstlisting}
 
 \section{Architecture}
 \par
+This core is made to interface parallel to serial data. Data is loaded into the core, and then enable is pulsed to
+push data out in a serial fashion. There is a count output that tells how many bits have been output. Data is only output
+when the enable is toggled. The counter will start at the max number of bits. For a 32 bit word this will be the decimal 32.
+When toggled the counter will state the number of the bit present at the output. Starting at 32 means once enable is active,
+and the counter is 31, bit 31 of the loaded word will now be output on the serial output. When the counter reaches 0 it means
+the internal register has output all data since the last bit, 0, is now present on the serial output. Any further enable
+pulses will not change the count but will shift the internal register. This will result in a 0 at the output since the register
+shifts in 0 bits as each bit is output.
 The only module is the piso module. It is listed below.
 
 \begin{itemize}
@@ -69,6 +100,7 @@ The only module is the piso module. It is listed below.
 Please see \ref{Module Documentation} for more information.
 
 \subsection{Waveform}
+Below is a waveform in a typical application of the core. This shows the count down and how the enable is pulsed to increment it.
 
 \includegraphics[width=\textwidth]{src/diagrams/waveform.png}
 
@@ -117,15 +149,21 @@ There are a few different simulations that can be run for this core.
 
 \subsection{iverilog}
 \par
-iverilog is used for simple test benches for quick verification, visually, of the core.
+iverilog is used for simple test benches for quick verification, visually, of the core. This will autofinish after it has
+run up to a certain number of words have been output.
 
 \subsection{cocotb}
 \par
+This method allows for quick writing of test benches that acutally assert and check the state of the core.
+These tests are much more conclusive since it will run all test vectors and generate a report if they
+pass or fail. All tests generate to a single fst wave file. The method of launching the tests is to use
+fusesoc. These have not been written to use the python runner method or makefiles.
 To use the cocotb tests you must install the following python libraries.
 \begin{lstlisting}[language=bash]
   $ pip install cocotb
 \end{lstlisting}
 
+The targets available are listed below.
 \begin{itemize}
   \item \textbf{sim\_cocotb} Standard simulation PISO conversion using cocotb.
 \end{itemize}

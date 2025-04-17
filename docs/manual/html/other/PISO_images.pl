@@ -14,7 +14,7 @@ $cached_env_img{$key} = q|<IMG
 
 $key = q/includegraphics[width=textwidth]{srcslashdiagramsslashwaveform.png};MSF=1.6;AAT/;
 $cached_env_img{$key} = q|<IMG
- STYLE="height: 9.11ex; vertical-align: -0.12ex; " SRC="|."$dir".q|PISO_img2.svg"
+ STYLE="height: 8.40ex; vertical-align: -0.12ex; " SRC="|."$dir".q|PISO_img2.svg"
  ALT="\includegraphics[width=\textwidth]{src/diagrams/waveform.png}">|; 
 
 1;
