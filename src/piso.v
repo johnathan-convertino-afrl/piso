@@ -3,7 +3,7 @@
 //
 // author:  JAY CONVERTINO
 //
-// date:    2025/15/04
+// date:    2025/04/15
 //
 // about:   Brief
 // PISO (parallel in serial out) The idea is to keep this core simple,
