@@ -56,7 +56,7 @@ When toggled the counter will state the number of the bit present at the output.
 and the counter is 31, bit 31 of the loaded word will now be output on the serial output. When the counter reaches 0 it means
 the internal register has output all data since the last bit, 0, is now present on the serial output. Any further enable
 pulses will not change the count but will shift the internal register. This will result in a 0 at the output since the register
-shifts in 0 bits as each bit is output.
+shifts in 0 bits as each bit is output. All data is shifted in MSb to LSb. Meaning Bit 31 is output first and 0 is last.
 The only module is the piso module. It is listed below.
 
 <P>
@@ -79,7 +79,31 @@ Please see <A HREF="PISO_node19.html#Module_Documentation"><IMG  ALT="[*]" SRC="
   HREF="PISO_node8.html">Waveform</A>
 </UL>
 <!--End of Table of Child-Links-->
-<BR><HR>
+
+<DIV CLASS="navigation"><HR>
+<!--Navigation Panel-->
+<A
+ HREF="PISO_node8.html">
+<IMG WIDTH="37" HEIGHT="24" ALT="next" SRC="next.png"></A> 
+<A
+ HREF="html.html">
+<IMG WIDTH="26" HEIGHT="24" ALT="up" SRC="up.png"></A> 
+<A
+ HREF="PISO_node6.html">
+<IMG WIDTH="63" HEIGHT="24" ALT="previous" SRC="prev.png"></A> 
+<A ID="tex2html61"
+  HREF="PISO_node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Next:</B> <A
+ HREF="PISO_node8.html">Waveform</A>
+<B> Up:</B> <A
+ HREF="html.html">html</A>
+<B> Previous:</B> <A
+ HREF="PISO_node6.html">In a Project</A>
+ &nbsp; <B>  <A ID="tex2html62"
+  HREF="PISO_node1.html">Contents</A></B> </DIV>
+<!--End of Navigation Panel-->
 
 </BODY>
 </HTML>

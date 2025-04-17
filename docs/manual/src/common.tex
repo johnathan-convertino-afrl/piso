@@ -90,7 +90,7 @@ When toggled the counter will state the number of the bit present at the output.
 and the counter is 31, bit 31 of the loaded word will now be output on the serial output. When the counter reaches 0 it means
 the internal register has output all data since the last bit, 0, is now present on the serial output. Any further enable
 pulses will not change the count but will shift the internal register. This will result in a 0 at the output since the register
-shifts in 0 bits as each bit is output.
+shifts in 0 bits as each bit is output. All data is shifted in MSb to LSb. Meaning Bit 31 is output first and 0 is last.
 The only module is the piso module. It is listed below.
 
 \begin{itemize}
