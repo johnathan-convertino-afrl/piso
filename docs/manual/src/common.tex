@@ -45,13 +45,16 @@ The following are the dependencies of the cores.
 \par
 This core is designed to be used on the same clock domain as the input parallel data. The serial output rate is set by the enable.
 The enable should only be pulsed for one clock cycle. If the clock is the rate the enable should be tied high. Load has to be
-used to load the input data to the register and reset the output count. The data count provides other cores a bit count to know what bit currently being output from the core. On load no data is output till the enable is pulsed. Once pulsed the output will be the data bit. Load will zero the output, also can be zeroed by just continuing to use enable past the full bit count (internal reg is filled with zeros).
+used to load the input data to the register and reset the output count. The data count provides other cores a bit count to know
+what bit currently being output from the core. On load the data output is the previous bit till the enable is pulsed.
+Once pulsed the output will be the data bit. Load will NOT change the output, also can be zeroed by just continuing to
+se enable past the zeroth bit count (internal reg is filled with zeros).
 The series of steps to use the core are as follows.
 \begin{enumerate}
   \item Set pdata to input data, and set load to 1 (data will be loaded on positive clock edge to internal registers).
   \item Set load to 0 (dcount will now be the max number of bits in the word loaded).
   \item Pulse enable to 1 that is synced to the main clock. Only hold high for one period of the master clock.
-  \item Data bit will be output on the serial line and held till next enable or load.
+  \item Data bit will be output on the serial line and held till next enable.
   \item Repeat enable pulse until dcount is equal to 0.
 \end{enumerate}
 

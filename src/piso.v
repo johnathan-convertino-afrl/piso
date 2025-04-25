@@ -84,7 +84,7 @@ module piso #(
     assign dcount = {{(BUS_WIDTH*8-COUNT_WIDTH-1){1'b0}}, r_dcount};
 
     // serialized output data.
-    assign sdata = r_ppdata[BUS_WIDTH*8-1];
+    assign sdata = r_sdata;//r_ppdata[BUS_WIDTH*8-1];
 
     // Positive edge data count that is decremented on enable pulse.
     always @(posedge clk)
@@ -95,11 +95,6 @@ module piso #(
       end else begin
         r_dcount <= r_dcount;
 
-        if(load == 1'b1)
-        begin
-          r_dcount <= BUS_WIDTH*8;
-        end
-
         if(ena == 1'b1)
         begin
           r_dcount <= r_dcount - 1;
@@ -108,6 +103,11 @@ module piso #(
           begin
             r_dcount <= r_dcount;
           end
+        end
+
+        if(load == 1'b1)
+        begin
+          r_dcount <= BUS_WIDTH*8;
         end
       end
     end
@@ -123,16 +123,15 @@ module piso #(
         r_ppdata <= r_ppdata;
         r_sdata  <= r_sdata;
 
-        if(load == 1'b1)
-        begin
-          r_ppdata <= pdata;
-          r_sdata <= 1'b0;
-        end
-
         if(ena == 1'b1)
         begin
           r_ppdata <= {r_ppdata[BUS_WIDTH*8-2:0], 1'b0};
           r_sdata  <= r_ppdata[BUS_WIDTH*8-1];
+        end
+
+        if(load == 1'b1)
+        begin
+          r_ppdata <= pdata;
         end
       end
     end

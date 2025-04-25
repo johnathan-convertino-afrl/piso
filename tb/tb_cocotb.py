@@ -69,22 +69,27 @@ class sipo:
   async def _run(self):
     self._active = False
 
-    counter = 0
+    counter = self._dut.BUS_WIDTH.value*8
 
     while True:
-      await FallingEdge(self._dut.clk)
+      await RisingEdge(self._dut.clk)
+
+      if(not self._dut.rstn.value):
+        continue
 
       if(self._dut.load.value):
-        counter = self._dut.BUS_WIDTH.value*8-1
+        counter = self._dut.BUS_WIDTH.value*8
         self._active = True
         self._data = 0
         self._idle_read.clear()
 
-      if(self._dut.ena.value and self._active):
-        self._data = self._data | ((self._dut.sdata.value.integer & 1) << counter)
+      if(self._dut.dcount.value.integer != self._dut.BUS_WIDTH.value*8 and self._active and counter != self._dut.BUS_WIDTH.value*8):
+        self._data = self._data | ((self._dut.sdata.value.integer & 1) << self._dut.dcount.value.integer)
+
+      if(self._dut.ena.value):
         counter -= 1
 
-      if(counter < 0):
+      if(self._dut.dcount.value.integer == 0 and counter == 0):
         self._active = False
         self._idle_read.set()
 
