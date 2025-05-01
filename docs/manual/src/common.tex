@@ -74,6 +74,7 @@ Module instantiation:
       .clk(clk),
       .rstn(rstn),
       .ena(ena),
+      .rev(rev),
       .load(load),
       .pdata(pdata),
       .sdata(sdata),
@@ -90,7 +91,8 @@ When toggled the counter will state the number of the bit present at the output.
 and the counter is 31, bit 31 of the loaded word will now be output on the serial output. When the counter reaches 0 it means
 the internal register has output all data since the last bit, 0, is now present on the serial output. Any further enable
 pulses will not change the count but will shift the internal register. This will result in a 0 at the output since the register
-shifts in 0 bits as each bit is output. All data is shifted in MSb to LSb. Meaning Bit 31 is output first and 0 is last.
+shifts in 0 bits as each bit is output. All data is shifted in MSb to LSb or LSb to MSb. This is set with the rev input.
+When active high (1) the LSb to MSb method is used. When rev is set to 0 MSb to LSb is used.
 The only module is the piso module. It is listed below.
 
 \begin{itemize}
@@ -100,9 +102,15 @@ The only module is the piso module. It is listed below.
 Please see \ref{Module Documentation} for more information.
 
 \subsection{Waveform}
-Below is a waveform in a typical application of the core. This shows the count down and how the enable is pulsed to decrement it.
+\par
+Below is a waveform in a typical application of the core for MSb to LSb. This shows the count up and how the enable is pulsed to decrement it.
 
-\includegraphics[width=\textwidth]{img/diagrams/waveform.png}
+\includegraphics[width=\textwidth]{img/diagrams/waveform_rev0.png}
+
+\par
+Next shows the core with rev set to 1 for LSb to MSb operation.
+
+\includegraphics[width=\textwidth]{img/diagrams/waveform_rev1.png}
 
 \section{Building}
 

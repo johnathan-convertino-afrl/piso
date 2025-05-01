@@ -47,6 +47,7 @@
  *   clk     - Clock
  *   rstn    - negative reset
  *   ena     - enable for core, use to change output rate. Enable serial shift output.
+ *   rev     - reverse, 0 is MSb first out, 1 is LSb first out.
  *   load    - load parallel data into core. This can be done at any time.
  *   pdata   - parallel data input, registered at load only.
  *   sdata   - serialized data output.
@@ -59,6 +60,7 @@ module tb_cocotb #(
     input                     clk,
     input                     rstn,
     input                     ena,
+    input                     rev,
     input                     load,
     input   [BUS_WIDTH*8-1:0] pdata,
     output                    sdata,
@@ -84,6 +86,7 @@ module tb_cocotb #(
     .clk(clk),
     .rstn(rstn),
     .ena(ena),
+    .rev(rev),
     .load(load),
     .pdata(pdata),
     .sdata(sdata),

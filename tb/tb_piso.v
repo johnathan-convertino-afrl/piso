@@ -73,6 +73,7 @@ module tb_piso ();
     .clk(tb_clk),
     .rstn(tb_rstn),
     .ena(tb_ena),
+    .rev(1'b0),
     .load(tb_load),
     .pdata(tb_pdata),
     .sdata(tb_sdata),
@@ -121,7 +122,7 @@ module tb_piso ();
       begin
         tb_ena <= tb_ena;
         tb_load <= 1'b1;
-        tb_pdata <= tb_pdata + 1;fin_data
+        tb_pdata <= tb_pdata + 1;
         fin_data <= tb_data;
       end
 

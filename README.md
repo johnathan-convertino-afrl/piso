@@ -9,7 +9,7 @@
    
    date: 2024.03.19
    
-   details: Interface Parallel to Serial interfaces
+   details: Interface Parallel to Serial interfaces. MSb or LSb first.
 
    license: MIT   
    

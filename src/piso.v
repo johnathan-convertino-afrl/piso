@@ -48,6 +48,7 @@
  *  clk     - global clock for the core.
  *  rstn    - negative syncronus reset to clk.
  *  ena     - enable for core, use to change output rate. Enable serial shift output.
+ *  rev     - reverse, 0 is MSb first out, 1 is LSb first out.
  *  load    - load parallel data into core. Reset for next data message to send. This can be done at any time.
  *  pdata   - parallel data input, registered at load only.
  *  sdata   - serialized data output.
@@ -60,6 +61,7 @@ module piso #(
       input                     clk,
       input                     rstn,
       input                     ena,
+      input                     rev,
       input                     load,
       input   [BUS_WIDTH*8-1:0] pdata,
       output                    sdata,
@@ -84,7 +86,7 @@ module piso #(
     assign dcount = {{(BUS_WIDTH*8-COUNT_WIDTH-1){1'b0}}, r_dcount};
 
     // serialized output data.
-    assign sdata = r_sdata;//r_ppdata[BUS_WIDTH*8-1];
+    assign sdata = r_sdata;
 
     // Positive edge data count that is decremented on enable pulse.
     always @(posedge clk)
@@ -125,8 +127,16 @@ module piso #(
 
         if(ena == 1'b1)
         begin
-          r_ppdata <= {r_ppdata[BUS_WIDTH*8-2:0], 1'b0};
-          r_sdata  <= r_ppdata[BUS_WIDTH*8-1];
+          //MSb first
+          if(rev == 1'b0)
+          begin
+            r_ppdata <= {r_ppdata[BUS_WIDTH*8-2:0], 1'b0};
+            r_sdata  <= r_ppdata[BUS_WIDTH*8-1];
+          //LSb first
+          end else begin
+            r_ppdata <= {1'b0, r_ppdata[BUS_WIDTH*8-1:1]};
+            r_sdata  <= r_ppdata[0];
+          end
         end
 
         if(load == 1'b1)

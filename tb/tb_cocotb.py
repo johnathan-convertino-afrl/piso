@@ -78,18 +78,26 @@ class sipo:
         continue
 
       if(self._dut.load.value):
-        counter = self._dut.BUS_WIDTH.value*8
+        if(self._dut.rev.value):
+          counter = -1
+        else:
+          counter = self._dut.BUS_WIDTH.value*8
         self._active = True
         self._data = 0
         self._idle_read.clear()
 
-      if(self._dut.dcount.value.integer != self._dut.BUS_WIDTH.value*8 and self._active and counter != self._dut.BUS_WIDTH.value*8):
-        self._data = self._data | ((self._dut.sdata.value.integer & 1) << self._dut.dcount.value.integer)
+      if(self._dut.dcount.value.integer != self._dut.BUS_WIDTH.value*8 and self._active and not self._dut.load.value):
+        self._data = self._data | ((self._dut.sdata.value.integer & 1) << counter)
 
       if(self._dut.ena.value):
-        counter -= 1
+        if(self._dut.rev.value):
+          counter += 1
+        else:
+          counter -= 1
 
-      if(self._dut.dcount.value.integer == 0 and counter == 0):
+      # print(counter, self._data, (self._dut.sdata.value.integer & 1), self._active, self._dut.dcount.value.integer)
+
+      if(self._dut.dcount.value.integer == 0 and not self._dut.load.value):
         self._active = False
         self._idle_read.set()
 
@@ -122,14 +130,14 @@ async def reset_dut(dut):
   await Timer(20, units="ns")
   dut.rstn.value = 1
 
-# Function: increment test
+# Function: increment test MSb
 # Coroutine that is identified as a test routine. Write data, on one clock edge, read
 # on the next.
 #
 # Parameters:
 #   dut - Device under test passed from cocotb.
 @cocotb.test()
-async def increment_test(dut):
+async def increment_test_MSb(dut):
 
     mclock = start_clock(dut)
 
@@ -138,6 +146,58 @@ async def increment_test(dut):
     dut.load.value = 0
 
     dut.ena.value = 0
+
+    dut.rev.value = 0
+
+    ena_pulse = Timer(mclock.period)
+
+    await reset_dut(dut)
+
+    for x in range(1, 2**8):
+
+        await RisingEdge(dut.clk)
+
+        dut.pdata.value = x
+        dut.load.value = 1
+
+        await RisingEdge(dut.clk)
+        dut.load.value = 0
+
+        await Timer(20, units="ns")
+
+        for _ in range(dut.BUS_WIDTH.value*8):
+          await RisingEdge(dut.clk)
+          dut.ena.value = 1
+          await RisingEdge(dut.clk)
+          dut.ena.value = 0
+          await Timer(20, units="ns")
+
+        rx_data = await converter.get_data()
+
+        assert rx_data == x, "SENT DATA DOES NOT MATCH RECEIVED"
+
+        await Timer(20, units="ns")
+
+    await RisingEdge(dut.clk)
+
+# Function: increment test LSb
+# Coroutine that is identified as a test routine. Write data, on one clock edge, read
+# on the next.
+#
+# Parameters:
+#   dut - Device under test passed from cocotb.
+@cocotb.test()
+async def increment_test_LSb(dut):
+
+    mclock = start_clock(dut)
+
+    converter = sipo(dut)
+
+    dut.load.value = 0
+
+    dut.ena.value = 0
+
+    dut.rev.value = 1
 
     ena_pulse = Timer(mclock.period)
 
