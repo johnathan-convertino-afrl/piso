@@ -43,6 +43,8 @@
  *
  * Parametes:
  *  BUS_WIDTH - width of the parallel data input in bytes.
+ *  DEFAULT_RESET_VAL - Value that serial out will have after reset, default 0. Anything else will be 1.
+ *  DEFAULT_SHIFT_VAL - Value that will be shifted into the parallel output shift register. Default 0, anything else will be 1.
  *
  * Ports:
  *  clk     - global clock for the core.
@@ -56,7 +58,9 @@
  *
  */
 module piso #(
-      parameter BUS_WIDTH = 1
+      parameter BUS_WIDTH = 1,
+      parameter DEFAULT_RESET_VAL = 0,
+      parameter DEFAULT_SHIFT_VAL = 0
     ) (
       input   wire                    clk,
       input   wire                    rstn,
@@ -69,6 +73,11 @@ module piso #(
     );
 
     `include "util_helper_math.vh"
+
+    //convert ints to binary wire values.
+    localparam RESET_VAL = (DEFAULT_RESET_VAL != 0 ? 1'b1 : 1'b0);
+
+    localparam SHIFT_VAL = (DEFAULT_SHIFT_VAL != 0 ? 1'b1 : 1'b0);
 
     // makes life easier, calculate number of bits needed for count register
     localparam COUNT_WIDTH = clogb2(BUS_WIDTH*8)+1;
@@ -119,8 +128,8 @@ module piso #(
     begin
       if(rstn == 1'b0)
       begin
-        r_ppdata <= 0;
-        r_sdata <= 1'b0;
+        r_ppdata <= {BUS_WIDTH*8{SHIFT_VAL}};
+        r_sdata  <= RESET_VAL;
       end else begin
         r_ppdata <= r_ppdata;
         r_sdata  <= r_sdata;
@@ -130,11 +139,11 @@ module piso #(
           //MSb first
           if(rev == 1'b0)
           begin
-            r_ppdata <= {r_ppdata[BUS_WIDTH*8-2:0], 1'b0};
+            r_ppdata <= {r_ppdata[BUS_WIDTH*8-2:0], SHIFT_VAL};
             r_sdata  <= r_ppdata[BUS_WIDTH*8-1];
           //LSb first
           end else begin
-            r_ppdata <= {1'b0, r_ppdata[BUS_WIDTH*8-1:1]};
+            r_ppdata <= {SHIFT_VAL, r_ppdata[BUS_WIDTH*8-1:1]};
             r_sdata  <= r_ppdata[0];
           end
         end
