@@ -58,14 +58,14 @@
 module piso #(
       parameter BUS_WIDTH = 1
     ) (
-      input                     clk,
-      input                     rstn,
-      input                     ena,
-      input                     rev,
-      input                     load,
-      input   [BUS_WIDTH*8-1:0] pdata,
-      output                    sdata,
-      output  [BUS_WIDTH*8-1:0] dcount
+      input   wire                    clk,
+      input   wire                    rstn,
+      input   wire                    ena,
+      input   wire                    rev,
+      input   wire                    load,
+      input   wire  [BUS_WIDTH*8-1:0] pdata,
+      output  wire                    sdata,
+      output  wire  [BUS_WIDTH*8-1:0] dcount
     );
 
     `include "util_helper_math.vh"
@@ -114,7 +114,7 @@ module piso #(
       end
     end
 
-    // Positive edge shift register, parallel data is shifted left (C) on enable.
+    // Positive edge shift register, parallel data is shifted (C) on enable.
     always @(posedge clk)
     begin
       if(rstn == 1'b0)
