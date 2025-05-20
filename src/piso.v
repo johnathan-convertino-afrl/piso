@@ -43,6 +43,7 @@
  *
  * Parametes:
  *  BUS_WIDTH - width of the parallel data input in bytes.
+ *  COUNT_AMOUNT - If anything other than zero, the dcount and data output will use this value instead of the BUS_WIDTH size.
  *  DEFAULT_RESET_VAL - Value that serial out will have after reset, default 0. Anything else will be 1.
  *  DEFAULT_SHIFT_VAL - Value that will be shifted into the parallel output shift register. Default 0, anything else will be 1.
  *
@@ -59,6 +60,7 @@
  */
 module piso #(
       parameter BUS_WIDTH = 1,
+      parameter COUNT_AMOUNT = 0,
       parameter DEFAULT_RESET_VAL = 0,
       parameter DEFAULT_SHIFT_VAL = 0
     ) (
@@ -79,14 +81,16 @@ module piso #(
 
     localparam SHIFT_VAL = (DEFAULT_SHIFT_VAL != 0 ? 1'b1 : 1'b0);
 
+    localparam CK_COUNT_AMOUNT = (COUNT_AMOUNT > BUS_WIDTH*8 ? BUS_WIDTH*8 : (COUNT_AMOUNT == 0 ? BUS_WIDTH*8 : COUNT_AMOUNT));
+
     // makes life easier, calculate number of bits needed for count register
-    localparam COUNT_WIDTH = clogb2(BUS_WIDTH*8)+1;
+    localparam COUNT_WIDTH = clogb2(CK_COUNT_AMOUNT)+1;
 
     // data count register
     reg [COUNT_WIDTH:0] r_dcount;
 
     // register to contain input parallel data that is positive edge shifted.
-    reg [BUS_WIDTH*8-1:0] r_ppdata;
+    reg [BUS_WIDTH*8-1:0] r_pdata;
 
     // register for output data captured on postive edge
     reg r_sdata;
@@ -118,7 +122,7 @@ module piso #(
 
         if(load == 1'b1)
         begin
-          r_dcount <= BUS_WIDTH*8;
+          r_dcount <= CK_COUNT_AMOUNT;
         end
       end
     end
@@ -128,29 +132,29 @@ module piso #(
     begin
       if(rstn == 1'b0)
       begin
-        r_ppdata <= {BUS_WIDTH*8{SHIFT_VAL}};
-        r_sdata  <= RESET_VAL;
+        r_pdata <= {BUS_WIDTH*8{SHIFT_VAL}};
+        r_sdata <= RESET_VAL;
       end else begin
-        r_ppdata <= r_ppdata;
-        r_sdata  <= r_sdata;
+        r_pdata <= r_pdata;
+        r_sdata <= r_sdata;
 
         if(ena == 1'b1)
         begin
           //MSb first
           if(rev == 1'b0)
           begin
-            r_ppdata <= {r_ppdata[BUS_WIDTH*8-2:0], SHIFT_VAL};
-            r_sdata  <= r_ppdata[BUS_WIDTH*8-1];
+            r_pdata <= {r_pdata[CK_COUNT_AMOUNT-2:0], SHIFT_VAL};
+            r_sdata <= r_pdata[CK_COUNT_AMOUNT-1];
           //LSb first
           end else begin
-            r_ppdata <= {SHIFT_VAL, r_ppdata[BUS_WIDTH*8-1:1]};
-            r_sdata  <= r_ppdata[0];
+            r_pdata <= {SHIFT_VAL, r_pdata[CK_COUNT_AMOUNT-1:1]};
+            r_sdata <= r_pdata[0];
           end
         end
 
         if(load == 1'b1)
         begin
-          r_ppdata <= pdata;
+          r_pdata <= pdata;
         end
       end
     end
