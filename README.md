@@ -5,14 +5,19 @@
 
 ---
 
-   author: Jay Convertino   
-   
-   date: 2024.03.19
-   
-   details: Interface Parallel to Serial interfaces. MSb or LSb first.
+  author: Jay Convertino   
+  
+  date: 2024.03.19
+  
+  details: Interface Parallel to Serial interfaces. MSb or LSb first.
 
-   license: MIT   
+  license: MIT   
    
+  Actions:  
+
+  [![Lint Status](../../actions/workflows/lint.yml/badge.svg)](../../actions)  
+  [![Manual Status](../../actions/workflows/manual.yml/badge.svg)](../../actions)  
+  
 ---
 
 ### Version
