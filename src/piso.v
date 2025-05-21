@@ -39,7 +39,7 @@
 /*
  * Module: piso
  *
- * parllel in serial out
+ * Parllel in serial out
  *
  * Parametes:
  *  BUS_WIDTH - width of the parallel data input in bytes.
