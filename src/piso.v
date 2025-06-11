@@ -43,24 +43,23 @@
  *
  * Parametes:
  *  BUS_WIDTH - width of the parallel data input in bytes.
- *  COUNT_AMOUNT - If anything other than zero, the dcount and data output will use this value instead of the BUS_WIDTH size.
  *  DEFAULT_RESET_VAL - Value that serial out will have after reset, default 0. Anything else will be 1.
  *  DEFAULT_SHIFT_VAL - Value that will be shifted into the parallel output shift register. Default 0, anything else will be 1.
  *
  * Ports:
- *  clk     - global clock for the core.
- *  rstn    - negative syncronus reset to clk.
- *  ena     - enable for core, use to change output rate. Enable serial shift output.
- *  rev     - reverse, 0 is MSb first out, 1 is LSb first out.
- *  load    - load parallel data into core. Reset for next data message to send. This can be done at any time.
- *  pdata   - parallel data input, registered at load only.
- *  sdata   - serialized data output.
- *  dcount  - Number of bits to shift out. When the count hits zero, the parallel data register is empty and last bit is output on sdata.
+ *  clk               - global clock for the core.
+ *  rstn              - negative syncronus reset to clk.
+ *  ena               - enable for core, use to change output rate. Enable serial shift output.
+ *  rev               - reverse, 0 is MSb first out, 1 is LSb first out.
+ *  load              - load parallel data into core. Reset for next data message to send. This can be done at any time.
+ *  pdata             - parallel data input, registered at load only.
+ *  reg_count_amount  - If anything other than zero, the dcount and data output will use this value instead of the BUS_WIDTH size.
+ *  sdata             - serialized data output.
+ *  dcount            - Number of bits to shift out. 8 bit counter for up to 255. When the count hits zero, the parallel data register is empty and last bit is output on sdata.
  *
  */
 module piso #(
       parameter BUS_WIDTH = 1,
-      parameter COUNT_AMOUNT = 0,
       parameter DEFAULT_RESET_VAL = 0,
       parameter DEFAULT_SHIFT_VAL = 0
     ) (
@@ -70,24 +69,20 @@ module piso #(
       input   wire                    rev,
       input   wire                    load,
       input   wire  [BUS_WIDTH*8-1:0] pdata,
+      input   wire  [ 7:0]            reg_count_amount,
       output  wire                    sdata,
-      output  wire  [BUS_WIDTH*8-1:0] dcount
+      output  wire  [ 7:0]            dcount
     );
-
-    `include "util_helper_math.vh"
 
     //convert ints to binary wire values.
     localparam RESET_VAL = (DEFAULT_RESET_VAL != 0 ? 1'b1 : 1'b0);
 
     localparam SHIFT_VAL = (DEFAULT_SHIFT_VAL != 0 ? 1'b1 : 1'b0);
 
-    localparam CK_COUNT_AMOUNT = (COUNT_AMOUNT > BUS_WIDTH*8 ? BUS_WIDTH*8 : (COUNT_AMOUNT == 0 ? BUS_WIDTH*8 : COUNT_AMOUNT));
-
-    // makes life easier, calculate number of bits needed for count register
-    localparam COUNT_WIDTH = clogb2(CK_COUNT_AMOUNT)+1;
+    wire [ 7:0] s_count_amount;
 
     // data count register
-    reg [COUNT_WIDTH:0] r_dcount;
+    reg [7:0] r_dcount;
 
     // register to contain input parallel data that is positive edge shifted.
     reg [BUS_WIDTH*8-1:0] r_pdata;
@@ -96,10 +91,12 @@ module piso #(
     reg r_sdata;
 
     // assign counter to output data count so cores can track output status.
-    assign dcount = {{(BUS_WIDTH*8-COUNT_WIDTH-1){1'b0}}, r_dcount};
+    assign dcount = r_dcount;
 
     // serialized output data.
     assign sdata = r_sdata;
+    
+    assign s_count_amount = (reg_count_amount > BUS_WIDTH*8 : BUS_WIDTH*8 : (reg_count_amount == 0 ? BUS_WIDTH*8 : reg_count_amount));
 
     // Positive edge data count that is decremented on enable pulse.
     always @(posedge clk)
@@ -122,7 +119,7 @@ module piso #(
 
         if(load == 1'b1)
         begin
-          r_dcount <= CK_COUNT_AMOUNT;
+          r_dcount <= s_count_amount;
         end
       end
     end
@@ -138,16 +135,16 @@ module piso #(
         r_pdata <= r_pdata;
         r_sdata <= r_sdata;
 
-        if(ena == 1'b1)
+        //output data till we are out.
+        if(ena == 1'b1 && r_dcount != 0)
         begin
           //MSb first
           if(rev == 1'b0)
           begin
-            r_pdata <= {r_pdata[CK_COUNT_AMOUNT-2:0], SHIFT_VAL};
-            r_sdata <= r_pdata[CK_COUNT_AMOUNT-1];
+            r_sdata <= r_pdata[r_dcount-1];
           //LSb first
           end else begin
-            r_pdata <= {SHIFT_VAL, r_pdata[CK_COUNT_AMOUNT-1:1]};
+            r_pdata <= {SHIFT_VAL, r_pdata[BUS_WIDTH*8-1:1]};
             r_sdata <= r_pdata[0];
           end
         end

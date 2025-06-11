@@ -63,7 +63,7 @@ Example:
 \begin{lstlisting}[language=bash]
   dep:
     depend:
-      - ">=AFRL:simple:piso:1.0.0"
+      - ">=AFRL:simple:piso:1.0.1"
 \end{lstlisting}
 
 Module instantiation:
@@ -77,6 +77,7 @@ Module instantiation:
       .rev(rev),
       .load(load),
       .pdata(pdata),
+      .reg_count_amount(reg_count_amount),
       .sdata(sdata),
       .dcount(dcount)
     );
@@ -86,8 +87,8 @@ Module instantiation:
 \par
 This core is made to interface parallel to serial data. Data is loaded into the core, and then enable is pulsed to
 push data out in a serial fashion. There is a count output that tells how many bits have been output. Data is only output
-when the enable is toggled. The counter will start at the max number of bits UNLESS COUNT\_AMOUNT is set to anything but 0.
-For a 32 bit word this will be the decimal 32. If COUNT\_AMOUNT is set it will start at that. Meaning bit sizes less than the bus
+when the enable is toggled. The counter will start at the max number of bits UNLESS reg\_count\_amount is set to anything but 0.
+For a 32 bit word this will be the decimal 32. If reg\_count\_amount is set it will start at that. Meaning bit sizes less than the bus
 can be shifted out and properly terminated when 0 is reached. This will change the amount of data shifted in the internal register.
 When toggled the counter will state the number of the bit present at the output. Starting at 32 means once enable is active,
 and the counter is 31, bit 31 of the loaded word will now be output on the serial output. When the counter reaches 0 it means
@@ -180,7 +181,7 @@ The targets available are listed below.
 The targets above can be run with various parameters.
 This test will check the input/output against each other to validate core operation.
 \begin{lstlisting}[language=bash]
-  $ fusesoc run --target sim_cocotb AFRL:simple:piso:1.0.0
+  $ fusesoc run --target sim_cocotb AFRL:simple:piso:1.0.1
 \end{lstlisting}
 
 \newpage

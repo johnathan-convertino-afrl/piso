@@ -76,6 +76,7 @@ module tb_piso ();
     .rev(1'b0),
     .load(tb_load),
     .pdata(tb_pdata),
+    .reg_count_amount(0),
     .sdata(tb_sdata),
     .dcount(tb_dcount)
   );

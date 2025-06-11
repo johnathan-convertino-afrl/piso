@@ -1,6 +1,6 @@
 CAPI=2:
 
-name: AFRL:simple:piso:1.0.0
+name: AFRL:simple:piso:1.0.1
 description: Parallel to serial core
 
 filesets:

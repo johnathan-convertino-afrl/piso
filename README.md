@@ -22,9 +22,10 @@
 
 ### Version
 #### Current
-  - V1.0.0 - initial release
+  - V1.0.0 - change count amount to a register that can be changed at anytime.
 
 #### Previous
+  - V1.0.0 - initial release
   - none
 
 ### DOCUMENTATION
