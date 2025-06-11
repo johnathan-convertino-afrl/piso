@@ -3,7 +3,7 @@
 <!--Converted with LaTeX2HTML 2024 (Released January 1, 2024) -->
 <HTML lang="en">
 <HEAD>
-<TITLE>fusesoc_info Depenecies</TITLE>
+<TITLE>In a Project</TITLE>
 
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
 <META NAME="viewport" CONTENT="width=device-width, initial-scale=1.0">
@@ -22,44 +22,110 @@
  HREF="PISO_node6.html">
 <IMG WIDTH="37" HEIGHT="24" ALT="next" SRC="next.png"></A> 
 <A
- HREF="PISO_node4.html">
+ HREF="PISO_node2.html">
 <IMG WIDTH="26" HEIGHT="24" ALT="up" SRC="up.png"></A> 
 <A
  HREF="PISO_node4.html">
 <IMG WIDTH="63" HEIGHT="24" ALT="previous" SRC="prev.png"></A> 
-<A ID="tex2html57"
+<A ID="tex2html54"
   HREF="PISO_node1.html">
 <IMG WIDTH="65" HEIGHT="24" ALT="contents" SRC="contents.png"></A>  
 <BR>
 <B> Next:</B> <A
- HREF="PISO_node6.html">In a Project</A>
+ HREF="PISO_node6.html">Architecture</A>
 <B> Up:</B> <A
- HREF="PISO_node4.html">Dependencies</A>
+ HREF="PISO_node2.html">Usage</A>
 <B> Previous:</B> <A
  HREF="PISO_node4.html">Dependencies</A>
- &nbsp; <B>  <A ID="tex2html58"
+ &nbsp; <B>  <A ID="tex2html55"
   HREF="PISO_node1.html">Contents</A></B> 
 <BR>
 <BR></DIV>
 <!--End of Navigation Panel-->
 
-<H3><A ID="SECTION00022100000000000000">
-fusesoc_info Depenecies</A>
-</H3>
-
-<UL>
-<LI>dep
-	
-<UL>
-<LI>AFRL:utility:helper:1.0.0
-	
-</LI>
-</UL>
-</LI>
-</UL>
+<H2><A ID="SECTION00023000000000000000">
+In a Project</A>
+</H2>
 
 <P>
-<BR><HR>
+This core is designed to be used on the same clock domain as the input parallel data. The serial output rate is set by the enable.
+The enable should only be pulsed for one clock cycle. If the clock is the rate the enable should be tied high. Load has to be
+used to load the input data to the register and reset the output count. The data count provides other cores a bit count to know
+what bit currently being output from the core. On load the data output is the previous bit till the enable is pulsed.
+Once pulsed the output will be the data bit. Load will NOT change the output, also can be zeroed by just continuing to
+se enable past the zeroth bit count (internal reg is filled with zeros).
+The series of steps to use the core are as follows.
+
+<OL>
+<LI>Set pdata to input data, and set load to 1 (data will be loaded on positive clock edge to internal registers).
+</LI>
+<LI>Set load to 0 (dcount will now be the max number of bits in the word loaded).
+</LI>
+<LI>Pulse enable to 1 that is synced to the main clock. Only hold high for one period of the master clock.
+</LI>
+<LI>Data bit will be output on the serial line and held till next enable.
+</LI>
+<LI>Repeat enable pulse until dcount is equal to 0.
+</LI>
+</OL>
+
+<P>
+Adding the core to a fusesoc project, outside of adding the verilog module to your code, requires the core be added as dependency.
+Example:
+<TABLE FRAME="VOID" CELLPADDING="4"><TR><TD>
+<PRE>
+  dep:
+    depend:
+      - "&gt;=AFRL:simple:piso:1.0.1"
+</PRE>
+</TD></TR></TABLE>
+
+<P>
+Module instantiation:
+<TABLE FRAME="VOID" CELLPADDING="4"><TR><TD>
+<PRE>
+    piso #(
+      .BUS_WIDTH(4)
+    ) inst_piso (
+      .clk(clk),
+      .rstn(rstn),
+      .ena(ena),
+      .rev(rev),
+      .load(load),
+      .pdata(pdata),
+      .reg_count_amount(reg_count_amount),
+      .sdata(sdata),
+      .dcount(dcount)
+    );
+</PRE>
+</TD></TR></TABLE>
+
+<P>
+
+<DIV CLASS="navigation"><HR>
+<!--Navigation Panel-->
+<A
+ HREF="PISO_node6.html">
+<IMG WIDTH="37" HEIGHT="24" ALT="next" SRC="next.png"></A> 
+<A
+ HREF="PISO_node2.html">
+<IMG WIDTH="26" HEIGHT="24" ALT="up" SRC="up.png"></A> 
+<A
+ HREF="PISO_node4.html">
+<IMG WIDTH="63" HEIGHT="24" ALT="previous" SRC="prev.png"></A> 
+<A ID="tex2html54"
+  HREF="PISO_node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Next:</B> <A
+ HREF="PISO_node6.html">Architecture</A>
+<B> Up:</B> <A
+ HREF="PISO_node2.html">Usage</A>
+<B> Previous:</B> <A
+ HREF="PISO_node4.html">Dependencies</A>
+ &nbsp; <B>  <A ID="tex2html55"
+  HREF="PISO_node1.html">Contents</A></B> </DIV>
+<!--End of Navigation Panel-->
 
 </BODY>
 </HTML>

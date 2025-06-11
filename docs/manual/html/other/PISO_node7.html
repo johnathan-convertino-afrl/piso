@@ -3,7 +3,7 @@
 <!--Converted with LaTeX2HTML 2024 (Released January 1, 2024) -->
 <HTML lang="en">
 <HEAD>
-<TITLE>Architecture</TITLE>
+<TITLE>Waveform</TITLE>
 
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
 <META NAME="viewport" CONTENT="width=device-width, initial-scale=1.0">
@@ -11,8 +11,7 @@
 
 <LINK REL="STYLESHEET" HREF="html.css">
 
-<LINK REL="next" HREF="PISO_node9.html">
-<LINK REL="previous" HREF="PISO_node2.html">
+<LINK REL="previous" HREF="PISO_node6.html">
 <LINK REL="next" HREF="PISO_node8.html">
 </HEAD>
 
@@ -23,90 +22,49 @@
  HREF="PISO_node8.html">
 <IMG WIDTH="37" HEIGHT="24" ALT="next" SRC="next.png"></A> 
 <A
- HREF="html.html">
+ HREF="PISO_node6.html">
 <IMG WIDTH="26" HEIGHT="24" ALT="up" SRC="up.png"></A> 
 <A
  HREF="PISO_node6.html">
 <IMG WIDTH="63" HEIGHT="24" ALT="previous" SRC="prev.png"></A> 
-<A ID="tex2html61"
+<A ID="tex2html59"
   HREF="PISO_node1.html">
 <IMG WIDTH="65" HEIGHT="24" ALT="contents" SRC="contents.png"></A>  
 <BR>
 <B> Next:</B> <A
- HREF="PISO_node8.html">Waveform</A>
+ HREF="PISO_node8.html">Building</A>
 <B> Up:</B> <A
- HREF="html.html">html</A>
+ HREF="PISO_node6.html">Architecture</A>
 <B> Previous:</B> <A
- HREF="PISO_node6.html">In a Project</A>
- &nbsp; <B>  <A ID="tex2html62"
+ HREF="PISO_node6.html">Architecture</A>
+ &nbsp; <B>  <A ID="tex2html60"
   HREF="PISO_node1.html">Contents</A></B> 
 <BR>
 <BR></DIV>
 <!--End of Navigation Panel-->
 
-<H1><A ID="SECTION00030000000000000000">
-Architecture</A>
-</H1>
+<H2><A ID="SECTION00031000000000000000">
+Waveform</A>
+</H2>
 
 <P>
-This core is made to interface parallel to serial data. Data is loaded into the core, and then enable is pulsed to
-push data out in a serial fashion. There is a count output that tells how many bits have been output. Data is only output
-when the enable is toggled. The counter will start at the max number of bits UNLESS reg_count_amount is set to anything but 0.
-For a 32 bit word this will be the decimal 32. If reg_count_amount is set it will start at that. Meaning bit sizes less than the bus
-can be shifted out and properly terminated when 0 is reached. This will change the amount of data shifted in the internal register.
-When toggled the counter will state the number of the bit present at the output. Starting at 32 means once enable is active,
-and the counter is 31, bit 31 of the loaded word will now be output on the serial output. When the counter reaches 0 it means
-the internal register has output all data since the last bit, 0, is now present on the serial output. Any further enable
-pulses will not change the count but will shift the internal register. This will result in a 0 at the output since the register
-shifts in 0 bits as each bit is output. All data is shifted in MSb to LSb or LSb to MSb. This is set with the rev input.
-When active high (1) the LSb to MSb method is used. When rev is set to 0 MSb to LSb is used.
-The only module is the piso module. It is listed below.
+Below is a waveform in a typical application of the core for MSb to LSb. This shows the count up and how the enable is pulsed to decrement it.
 
 <P>
-
-<UL>
-<LI><SPAN  CLASS="textbf">piso</SPAN> Convert parallel data to serial data. (see core for documentation).
-</LI>
-</UL>
+<IMG
+ STYLE="height: 8.55ex; vertical-align: -0.12ex; " SRC="PISO_img2.svg"
+ ALT="\includegraphics[width=\textwidth]{img/diagrams/waveform_rev0.png}">
 
 <P>
-Please see <A HREF="PISO_node19.html#Module_Documentation"><IMG  ALT="[*]" SRC="crossref.png"></A> for more information.
+Next shows the core with rev set to 1 for LSb to MSb operation.
+
+<P>
+<IMG
+ STYLE="height: 8.55ex; vertical-align: -0.12ex; " SRC="PISO_img3.svg"
+ ALT="\includegraphics[width=\textwidth]{img/diagrams/waveform_rev1.png}">
 
 <P>
 <BR><HR>
-<!--Table of Child-Links-->
-<A ID="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
-
-<UL CLASS="ChildLinks">
-<LI><A ID="tex2html63"
-  HREF="PISO_node8.html">Waveform</A>
-</UL>
-<!--End of Table of Child-Links-->
-
-<DIV CLASS="navigation"><HR>
-<!--Navigation Panel-->
-<A
- HREF="PISO_node8.html">
-<IMG WIDTH="37" HEIGHT="24" ALT="next" SRC="next.png"></A> 
-<A
- HREF="html.html">
-<IMG WIDTH="26" HEIGHT="24" ALT="up" SRC="up.png"></A> 
-<A
- HREF="PISO_node6.html">
-<IMG WIDTH="63" HEIGHT="24" ALT="previous" SRC="prev.png"></A> 
-<A ID="tex2html61"
-  HREF="PISO_node1.html">
-<IMG WIDTH="65" HEIGHT="24" ALT="contents" SRC="contents.png"></A>  
-<BR>
-<B> Next:</B> <A
- HREF="PISO_node8.html">Waveform</A>
-<B> Up:</B> <A
- HREF="html.html">html</A>
-<B> Previous:</B> <A
- HREF="PISO_node6.html">In a Project</A>
- &nbsp; <B>  <A ID="tex2html62"
-  HREF="PISO_node1.html">Contents</A></B> </DIV>
-<!--End of Navigation Panel-->
 
 </BODY>
 </HTML>

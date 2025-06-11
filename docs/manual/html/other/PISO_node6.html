@@ -3,7 +3,7 @@
 <!--Converted with LaTeX2HTML 2024 (Released January 1, 2024) -->
 <HTML lang="en">
 <HEAD>
-<TITLE>In a Project</TITLE>
+<TITLE>Architecture</TITLE>
 
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
 <META NAME="viewport" CONTENT="width=device-width, initial-scale=1.0">
@@ -11,7 +11,8 @@
 
 <LINK REL="STYLESHEET" HREF="html.css">
 
-<LINK REL="previous" HREF="PISO_node4.html">
+<LINK REL="next" HREF="PISO_node8.html">
+<LINK REL="previous" HREF="PISO_node2.html">
 <LINK REL="next" HREF="PISO_node7.html">
 </HEAD>
 
@@ -22,85 +23,65 @@
  HREF="PISO_node7.html">
 <IMG WIDTH="37" HEIGHT="24" ALT="next" SRC="next.png"></A> 
 <A
- HREF="PISO_node2.html">
+ HREF="html.html">
 <IMG WIDTH="26" HEIGHT="24" ALT="up" SRC="up.png"></A> 
 <A
  HREF="PISO_node5.html">
 <IMG WIDTH="63" HEIGHT="24" ALT="previous" SRC="prev.png"></A> 
-<A ID="tex2html59"
+<A ID="tex2html56"
   HREF="PISO_node1.html">
 <IMG WIDTH="65" HEIGHT="24" ALT="contents" SRC="contents.png"></A>  
 <BR>
 <B> Next:</B> <A
- HREF="PISO_node7.html">Architecture</A>
+ HREF="PISO_node7.html">Waveform</A>
 <B> Up:</B> <A
- HREF="PISO_node2.html">Usage</A>
+ HREF="html.html">html</A>
 <B> Previous:</B> <A
- HREF="PISO_node5.html">fusesoc_info Depenecies</A>
- &nbsp; <B>  <A ID="tex2html60"
+ HREF="PISO_node5.html">In a Project</A>
+ &nbsp; <B>  <A ID="tex2html57"
   HREF="PISO_node1.html">Contents</A></B> 
 <BR>
 <BR></DIV>
 <!--End of Navigation Panel-->
 
-<H2><A ID="SECTION00023000000000000000">
-In a Project</A>
-</H2>
+<H1><A ID="SECTION00030000000000000000">
+Architecture</A>
+</H1>
 
 <P>
-This core is designed to be used on the same clock domain as the input parallel data. The serial output rate is set by the enable.
-The enable should only be pulsed for one clock cycle. If the clock is the rate the enable should be tied high. Load has to be
-used to load the input data to the register and reset the output count. The data count provides other cores a bit count to know
-what bit currently being output from the core. On load the data output is the previous bit till the enable is pulsed.
-Once pulsed the output will be the data bit. Load will NOT change the output, also can be zeroed by just continuing to
-se enable past the zeroth bit count (internal reg is filled with zeros).
-The series of steps to use the core are as follows.
-
-<OL>
-<LI>Set pdata to input data, and set load to 1 (data will be loaded on positive clock edge to internal registers).
-</LI>
-<LI>Set load to 0 (dcount will now be the max number of bits in the word loaded).
-</LI>
-<LI>Pulse enable to 1 that is synced to the main clock. Only hold high for one period of the master clock.
-</LI>
-<LI>Data bit will be output on the serial line and held till next enable.
-</LI>
-<LI>Repeat enable pulse until dcount is equal to 0.
-</LI>
-</OL>
+This core is made to interface parallel to serial data. Data is loaded into the core, and then enable is pulsed to
+push data out in a serial fashion. There is a count output that tells how many bits have been output. Data is only output
+when the enable is toggled. The counter will start at the max number of bits UNLESS reg_count_amount is set to anything but 0.
+For a 32 bit word this will be the decimal 32. If reg_count_amount is set it will start at that. Meaning bit sizes less than the bus
+can be shifted out and properly terminated when 0 is reached. This will change the amount of data shifted in the internal register.
+When toggled the counter will state the number of the bit present at the output. Starting at 32 means once enable is active,
+and the counter is 31, bit 31 of the loaded word will now be output on the serial output. When the counter reaches 0 it means
+the internal register has output all data since the last bit, 0, is now present on the serial output. Any further enable
+pulses will not change the count but will shift the internal register. This will result in a 0 at the output since the register
+shifts in 0 bits as each bit is output. All data is shifted in MSb to LSb or LSb to MSb. This is set with the rev input.
+When active high (1) the LSb to MSb method is used. When rev is set to 0 MSb to LSb is used.
+The only module is the piso module. It is listed below.
 
 <P>
-Adding the core to a fusesoc project, outside of adding the verilog module to your code, requires the core be added as dependency.
-Example:
-<TABLE FRAME="VOID" CELLPADDING="4"><TR><TD>
-<PRE>
-  dep:
-    depend:
-      - "&gt;=AFRL:simple:piso:1.0.1"
-</PRE>
-</TD></TR></TABLE>
+
+<UL>
+<LI><SPAN  CLASS="textbf">piso</SPAN> Convert parallel data to serial data. (see core for documentation).
+</LI>
+</UL>
 
 <P>
-Module instantiation:
-<TABLE FRAME="VOID" CELLPADDING="4"><TR><TD>
-<PRE>
-    piso #(
-      .BUS_WIDTH(4)
-    ) inst_piso (
-      .clk(clk),
-      .rstn(rstn),
-      .ena(ena),
-      .rev(rev),
-      .load(load),
-      .pdata(pdata),
-      .reg_count_amount(reg_count_amount),
-      .sdata(sdata),
-      .dcount(dcount)
-    );
-</PRE>
-</TD></TR></TABLE>
+Please see <A HREF="PISO_node18.html#Module_Documentation"><IMG  ALT="[*]" SRC="crossref.png"></A> for more information.
 
 <P>
+<BR><HR>
+<!--Table of Child-Links-->
+<A ID="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A ID="tex2html58"
+  HREF="PISO_node7.html">Waveform</A>
+</UL>
+<!--End of Table of Child-Links-->
 
 <DIV CLASS="navigation"><HR>
 <!--Navigation Panel-->
@@ -108,22 +89,22 @@ Module instantiation:
  HREF="PISO_node7.html">
 <IMG WIDTH="37" HEIGHT="24" ALT="next" SRC="next.png"></A> 
 <A
- HREF="PISO_node2.html">
+ HREF="html.html">
 <IMG WIDTH="26" HEIGHT="24" ALT="up" SRC="up.png"></A> 
 <A
  HREF="PISO_node5.html">
 <IMG WIDTH="63" HEIGHT="24" ALT="previous" SRC="prev.png"></A> 
-<A ID="tex2html59"
+<A ID="tex2html56"
   HREF="PISO_node1.html">
 <IMG WIDTH="65" HEIGHT="24" ALT="contents" SRC="contents.png"></A>  
 <BR>
 <B> Next:</B> <A
- HREF="PISO_node7.html">Architecture</A>
+ HREF="PISO_node7.html">Waveform</A>
 <B> Up:</B> <A
- HREF="PISO_node2.html">Usage</A>
+ HREF="html.html">html</A>
 <B> Previous:</B> <A
- HREF="PISO_node5.html">fusesoc_info Depenecies</A>
- &nbsp; <B>  <A ID="tex2html60"
+ HREF="PISO_node5.html">In a Project</A>
+ &nbsp; <B>  <A ID="tex2html57"
   HREF="PISO_node1.html">Contents</A></B> </DIV>
 <!--End of Navigation Panel-->
 
