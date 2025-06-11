@@ -95,7 +95,7 @@ module piso #(
 
     // serialized output data.
     assign sdata = r_sdata;
-    
+
     assign s_count_amount = (reg_count_amount > BUS_WIDTH*8 : BUS_WIDTH*8 : (reg_count_amount == 0 ? BUS_WIDTH*8 : reg_count_amount));
 
     // Positive edge data count that is decremented on enable pulse.
