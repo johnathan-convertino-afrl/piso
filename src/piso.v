@@ -152,6 +152,7 @@ module piso #(
         if(load == 1'b1)
         begin
           r_pdata <= pdata;
+          r_sdata <= SHIFT_VAL;
         end
       end
     end
