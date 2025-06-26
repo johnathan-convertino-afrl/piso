@@ -1,5 +1,6 @@
 # PISO
 ### Parallel to Serial Converter Core
+---
 
 ![image](docs/manual/img/AFRL.png)
 

@@ -136,16 +136,21 @@ module piso #(
         r_sdata <= r_sdata;
 
         //output data till we are out.
-        if(ena == 1'b1 && r_dcount != 0)
+        if(ena == 1'b1)
         begin
-          //MSb first
-          if(rev == 1'b0)
-          begin
-            r_sdata <= r_pdata[r_dcount-1];
-          //LSb first
+          if(r_dcount != 0)
+            begin
+            //MSb first
+            if(rev == 1'b0)
+            begin
+              r_sdata <= r_pdata[r_dcount-1];
+            //LSb first
+            end else begin
+              r_pdata <= {SHIFT_VAL, r_pdata[BUS_WIDTH*8-1:1]};
+              r_sdata <= r_pdata[0];
+            end
           end else begin
-            r_pdata <= {SHIFT_VAL, r_pdata[BUS_WIDTH*8-1:1]};
-            r_sdata <= r_pdata[0];
+            r_sdata <= SHIFT_VAL;
           end
         end
 
