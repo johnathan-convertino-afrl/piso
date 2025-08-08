@@ -45,6 +45,7 @@
  *  BUS_WIDTH - width of the parallel data input in bytes.
  *  DEFAULT_RESET_VAL - Value that serial out will have after reset, default 0. Anything else will be 1.
  *  DEFAULT_SHIFT_VAL - Value that will be shifted into the parallel output shift register. Default 0, anything else will be 1.
+ *  KEEP_LAST         - Keep the last bit value of 0 asserted on the serial output bus. Default 0 (not active, will use DEFAULT SHIFT VAL), 1 will activate this feature.
  *
  * Ports:
  *  clk               - global clock for the core.
@@ -61,7 +62,8 @@
 module piso #(
       parameter BUS_WIDTH = 1,
       parameter DEFAULT_RESET_VAL = 0,
-      parameter DEFAULT_SHIFT_VAL = 0
+      parameter DEFAULT_SHIFT_VAL = 0,
+      parameter KEEP_LAST = 0
     ) (
       input   wire                    clk,
       input   wire                    rstn,
@@ -139,7 +141,7 @@ module piso #(
         if(ena == 1'b1)
         begin
           if(r_dcount != 0)
-            begin
+          begin
             //MSb first
             if(rev == 1'b0)
             begin
@@ -150,7 +152,7 @@ module piso #(
               r_sdata <= r_pdata[0];
             end
           end else begin
-            r_sdata <= SHIFT_VAL;
+            r_sdata <= (KEEP_LAST ? r_sdata : SHIFT_VAL);
           end
         end
 
